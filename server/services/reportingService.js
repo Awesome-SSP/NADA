@@ -1,0 +1,1 @@
+//  Generates reports for cases in PDF/HTML formats using templating libraries.
