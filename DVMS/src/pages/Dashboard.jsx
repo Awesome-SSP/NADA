@@ -1,8 +1,10 @@
 import React from "react";
 import Header from "../components/Header"; // Import the Header component
 import { Box, Typography } from "@mui/material";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Pie, PieChart, Cell, LineChart, Line, ResponsiveContainer } from 'recharts';
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Pie as ChartPie } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 const dataBar = [
   { name: 'Sat', Cleared: 10, Suspicious: 15 },
@@ -14,13 +16,6 @@ const dataBar = [
   { name: 'Fri', Cleared: 9, Suspicious: 19 },
 ];
 
-const dataPie = [
-  { name: 'New', value: 30 },
-  { name: 'Under Investigation', value: 15 },
-  { name: 'Solved', value: 35 },
-  { name: 'Investment', value: 20 },
-];
-
 const dataLine = [
   { name: 'Jul', Cases: 15 },
   { name: 'Aug', Cases: 20 },
@@ -29,6 +24,16 @@ const dataLine = [
   { name: 'Nov', Cases: 22 },
   { name: 'Dec', Cases: 30 },
 ];
+
+const pieData = {
+  labels: ['False Positive', 'Suspicious Cases', 'Cases Solved', 'Ongoing Cases'],
+  datasets: [
+    {
+      data: [10, 20, 30, 40],
+      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+    },
+  ],
+};
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -50,11 +55,12 @@ const Dashboard = () => {
       <Box flex="1" p={2}>
         <Header title="Dashboard" subtitle="Overview of key metrics" /> {/* Add the Header here */}
         <Box display="grid" gap={2} gridTemplateColumns="repeat(12, 1fr)" mt={2}>
-          <Box bgcolor="white" borderRadius={2} boxShadow={1} gridColumn="span 4" p={2}>
-            <Typography color="primary" variant="h4">
+          {/* Updated Cases section */}
+          <Box bgcolor="#3B82F6" borderRadius={2} boxShadow={1} gridColumn="span 4" p={2}>
+            <Typography color="white" variant="h4">
               27
             </Typography>
-            <Typography>
+            <Typography color="white">
               cases
             </Typography>
           </Box>
@@ -71,47 +77,18 @@ const Dashboard = () => {
               Updates
             </Typography>
             <Box display="flex" flexDirection="column" mt={2} gap={2}>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography>
-                    Investigators assigned
-                  </Typography>
-                  <Typography color="textSecondary" variant="body2">
-                    28 January 2021
-                  </Typography>
-                </Box>
-                <Typography color="error">
-                  +50
-                </Typography>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography>
-                    Athlete profile updated
-                  </Typography>
-                  <Typography color="textSecondary" variant="body2">
-                    25 January 2021
-                  </Typography>
-                </Box>
-                <Typography color="success">
-                  +100
-                </Typography>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography>
-                    Case report
-                  </Typography>
-                  <Typography color="textSecondary" variant="body2">
-                    21 January 2021
-                  </Typography>
-                </Box>
-                <Typography color="primary">
-                  +5
-                </Typography>
-              </Box>
+              <Button variant="contained" href="http://example.com/investigators">
+                Investigators assigned
+              </Button>
+              <Button variant="contained" href="http://example.com/athlete-profile">
+                Athlete profile updated
+              </Button>
+              <Button variant="contained" href="http://example.com/case-report">
+                Case report
+              </Button>
             </Box>
           </Box>
+          {/* Updated Bar Chart */}
           <Box bgcolor="white" borderRadius={2} boxShadow={1} gridColumn="span 8" p={2} display="flex" flexDirection="column" alignItems="center">
             <Typography fontWeight="bold" variant="h6" mb={2}>
               Athlete performance Report
@@ -122,37 +99,22 @@ const Dashboard = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="Cleared" fill="#FF0000" />
-              <Bar dataKey="Suspicious" fill="#add8e6" />
+              <Bar dataKey="Cleared" fill="#FF0000" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="Suspicious" fill="#add8e6" radius={[10, 10, 0, 0]} />
             </BarChart>
           </Box>
+          {/* Updated Pie Chart */}
           <Box bgcolor="white" borderRadius={2} boxShadow={1} gridColumn="span 4" p={2} display="flex" flexDirection="column" alignItems="center">
             <Typography fontWeight="bold" variant="h6" mb={2}>
               Case management
             </Typography>
-            <PieChart height={400} width={400}>
-              <Pie
-                cx={200}
-                cy={200}
-                data={dataPie}
-                dataKey="value"
-                fill="#8884d8"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={120} // Increase the outer radius
-                innerRadius={50} // Increase the inner radius
-                paddingAngle={5}
-              >
-                {dataPie.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                    style={{ transition: 'transform 0.3s', transformOrigin: 'center' }}
-                    className="pie-chart-cell"
-                  />
-                ))}
-              </Pie>
-            </PieChart>
+            <ChartPie data={pieData} />
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body1">False Positive: <span style={{ color: '#FF6384' }}>10%</span></Typography>
+              <Typography variant="body1">Suspicious Cases: <span style={{ color: '#36A2EB' }}>20%</span></Typography>
+              <Typography variant="body1">Cases Solved: <span style={{ color: '#FFCE56' }}>30%</span></Typography>
+              <Typography variant="body1">Ongoing Cases: <span style={{ color: '#4BC0C0' }}>40%</span></Typography>
+            </Box>
           </Box>
           <Box bgcolor="white" borderRadius={2} boxShadow={1} gridColumn="span 6" p={2}>
             <Typography fontWeight="bold" variant="h6">
@@ -163,10 +125,10 @@ const Dashboard = () => {
                 <Link to="/athlete-profile2">
                   <img
                     alt="Ritika Sharma"
-                    className="w-10 h-10 rounded-full mx-auto"
-                    height="40"
+                    className="w-20 h-20 rounded-full mx-auto"
+                    height="60"
                     src="https://storage.googleapis.com/a1aa/image/EgxNNzpafNwNACvMeyjK3MDU9cnfU1mX4Q5Hw7rbfdsFmFVPB.jpg"
-                    width="40"
+                    width="60"
                     style={{ borderRadius: '50%' }} // Making images circular
                   />
                   <Typography>
@@ -181,10 +143,10 @@ const Dashboard = () => {
                 <Link to="/athlete-profile2">
                   <img
                     alt="Ajay Chauhan"
-                    className="w-10 h-10 rounded-full mx-auto"
-                    height="40"
+                    className="w-20 h-20 rounded-full mx-auto"
+                    height="60"
                     src="https://storage.googleapis.com/a1aa/image/ZF5mZjvO6gp4Ed579iS8SURceQXqrQL23DkhxG6aApUyso6JA.jpg"
-                    width="40"
+                    width="60"
                     style={{ borderRadius: '50%' }} // Making images circular
                   />
                   <Typography>
@@ -199,10 +161,10 @@ const Dashboard = () => {
                 <Link to="/athlete-profile2">
                   <img
                     alt="Rahul Kumar"
-                    className="w-10 h-10 rounded-full mx-auto"
-                    height="40"
+                    className="w-20 h-20 rounded-full mx-auto"
+                    height="60"
                     src="https://storage.googleapis.com/a1aa/image/eEwXZvpL4kUgRamVpIY9GJ7lQki5fxNttI7VyREsRvGjZR1TA.jpg"
-                    width="40"
+                    width="60"
                     style={{ borderRadius: '50%' }} // Making images circular
                   />
                   <Typography>
@@ -223,17 +185,17 @@ const Dashboard = () => {
               <LineChart data={dataLine}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Cases" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
-                <defs>
-                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-              </LineChart>
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="Cases" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+            </LineChart>
             </ResponsiveContainer>
           </Box>
         </Box>
@@ -241,4 +203,5 @@ const Dashboard = () => {
     </Box>
   );
 };
+
 export default Dashboard;
